@@ -1,0 +1,2 @@
+# flomoParse
+一个能将flomo导出数据转换为JSON数据的小工具
