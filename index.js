@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 var cheerio = require("cheerio");
-// const log = console.log.bind(console);
+const log = console.log.bind(console);
 
 // input string, output tag[]
 function getTagsFromText(string) {
@@ -40,7 +40,25 @@ function Export_JSON_File(data) {
   });
 }
 
-var myHtml = fs.readFileSync("flomoResource/202112.html");
-var $ = cheerio.load(myHtml);
-let exportJson = HtmlMemo2Json($);
-Export_JSON_File(exportJson);
+
+const FLOMO_DATA_FOLDER = 'flomoResource'
+
+const flomoDataPath = `./${FLOMO_DATA_FOLDER + '/' || ''}`
+var filePath = path.resolve(flomoDataPath)
+fs.readdir(filePath, (err, files) => {
+  var memosJSON = files.map(_path => {
+    if (err) {
+      log(err)
+      return [];
+    }
+    if (_path.indexOf('.html') > 0) {
+      let _html = fs.readFileSync(`${flomoDataPath}/${_path}`);
+      let _$ = cheerio.load(_html)
+      return HtmlMemo2Json(_$)
+    }
+    return []
+  })
+  memosJSON = memosJSON.flat()
+  console.log('finish: ' + memosJSON.length + ' data is exported')
+  Export_JSON_File(memosJSON);
+});
