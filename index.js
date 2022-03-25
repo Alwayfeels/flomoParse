@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 var cheerio = require("cheerio");
+const { contents } = require("cheerio/lib/api/traversing");
 const log = console.log.bind(console);
 
 // input string, output tag[]
@@ -14,16 +15,17 @@ function HtmlMemo2Json($) {
   let exportJSON = [];
   $(".memo").each((index, item) => {
     let content = [];
-    let contentStr = $(item).find(".content").text();
+    let tags = [];
     $(item)
-      .find(".content p")
+      .find(".content p, .content li")
       .each((i, e) => {
         let text = $(e).text();
         content.push(text);
+        tags.push(...getTagsFromText(text))
       });
     exportJSON.push({
       time: $(item).find(".time").text(),
-      tags: getTagsFromText(contentStr),
+      tags,
       content,
     });
   });
