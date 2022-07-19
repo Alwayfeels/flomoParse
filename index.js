@@ -16,6 +16,7 @@ function HtmlMemo2Json($) {
   $(".memo").each((index, item) => {
     let content = [];
     let tags = [];
+    let files = [];
     $(item)
       .find(".content p, .content li")
       .each((i, e) => {
@@ -23,10 +24,15 @@ function HtmlMemo2Json($) {
         content.push(text);
         tags.push(...getTagsFromText(text))
       });
+    $(item).find("img").each((i, e) => {
+      let src = $(e).attr("src");
+      files.push(src);
+    });
     exportJSON.push({
       time: $(item).find(".time").text(),
       tags,
       content,
+      filePath: files.length > 0 ? files : null,
     });
   });
   return exportJSON;
